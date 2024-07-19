@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
-import { userService } from "../services/user.service";
 import { IUser } from "../interfaces/user.interface";
+import { userService } from "../services/user.service";
 
 class UserController {
   public async getList(req: Request, res: Response, next: NextFunction) {
@@ -12,12 +12,11 @@ class UserController {
       next(e);
     }
   }
-
   public async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const dto = req.body as Partial<IUser>;
-      const newUser = await userService.create(dto);
-      res.status(201).json(newUser);
+      const dto = req.body as any; // TODO
+      const result = await userService.create(dto);
+      res.status(201).json(result);
     } catch (e) {
       next(e);
     }
@@ -25,25 +24,24 @@ class UserController {
 
   public async getById(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = Number(req.params.userId);
-      const user = await userService.getById(userId);
-      res.json(user);
+      const userId = req.params.userId;
+      const result = await userService.getById(userId);
+      res.json(result);
     } catch (e) {
       next(e);
     }
   }
-
   public async updateById(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = Number(req.params.userId);
-      const dto = req.body as Partial<IUser>;
-      const user = await userService.updateById(userId, dto);
-      res.status(201).json(user);
+      const dto = req.body as IUser;
+
+      const result = await userService.updateById(userId, dto);
+      res.status(201).json(result);
     } catch (e) {
       next(e);
     }
   }
-
   public async deleteById(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = Number(req.params.userId);

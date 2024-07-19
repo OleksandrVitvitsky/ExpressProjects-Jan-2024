@@ -8,9 +8,16 @@ router.get("/", userController.getList);
 router.post("/", userController.create);
 
 router.get("/:userId", userController.getById);
-router.put("/:userId", userController.updateById);
+router.put(
+  "/:userId",
+  //commonMiddleware.isIdValid("userId"),
+  // TODO add validation middleware for body
+  userController.updateById,
+);
+router.delete(
+  "/:carId",
+  // commonMiddleware.isIdValid("carId"),
+  userController.deleteById,
+);
 
-
-router.patch("/:userId", userController.updateById);
-router.delete("/:userId", userController.deleteById);
 export const UserRouter = router;
