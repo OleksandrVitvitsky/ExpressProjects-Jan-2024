@@ -7,35 +7,28 @@ class UserService {
     return await userRepository.getList();
   }
 
-  public async create(dto: Partial<IUser>): Promise<IUser> {
-    const { name, email, password } = dto;
-
-    if (!name || name.length < 3) {
-      throw new ApiError(
-        "Name is required and should be at least 3 characters",
-        400,
-      );
-    }
-    if (!email || !email.includes("@")) {
-      throw new ApiError("Email is required and should be valid", 400);
-    }
-    if (!password || password.length < 6) {
-      throw new ApiError(
-        "Password is required and should be at least 6 characters",
-        400,
-      );
-    }
+  public async create(dto: IUser): Promise<IUser> {
+    await this.isEmailExist(dto.email);
     return await userRepository.create(dto);
   }
-  public async getById(id: string): Promise<IUser> {
-    return await userRepository.getById(id);
+
+  public async getById(userId: string): Promise<IUser> {
+    return await userRepository.getById(userId);
   }
 
-  public async updateById(id: number, dto: IUser): Promise<IUser> {
-    return await userRepository.updateById(id, dto);
+  public async updateById(userId: string, dto: IUser): Promise<IUser> {
+    return await userRepository.updateById(userId, dto);
   }
-  public async deleteById(id: number): Promise<void> {
-    return await userRepository.deleteById(id);
+
+  public async deleteById(userId: string): Promise<void> {
+    await userRepository.deleteById(userId);
+  }
+
+  private async isEmailExist(email: string): Promise<void> {
+    const user = await userRepository.getByParams({ email });
+    if (user) {
+      throw new ApiError("Email already exists", 409);
+    }
   }
 }
 
