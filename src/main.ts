@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 // @ts-expect-error
 import { ApiError } from "./api-error";
 import { config } from "./configs/config";
+import { postRouter } from "./routers/post.router";
 import { userRouter } from "./routers/user.router";
 
 const app = express();
@@ -13,6 +14,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", userRouter);
+app.use("/posts", postRouter);
+
 app.use(
   "*",
   (err: ApiError, req: Request, res: Response, next: NextFunction) => {
