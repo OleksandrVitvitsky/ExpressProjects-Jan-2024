@@ -1,7 +1,7 @@
 export interface IPost {
   _id?: string;
   content: string;
-  userId: string;
+  _userId: string;
   isDeleted: boolean;
   createdAt?: Date;
   updatedAt?: Date;

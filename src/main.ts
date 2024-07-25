@@ -4,7 +4,8 @@ import mongoose from "mongoose";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { ApiError } from "./api-error";
-import { config } from "./configs/config";
+import { configs } from "./configs/configs";
+import { authRouter } from "./routers/auth.router";
 import { postRouter } from "./routers/post.router";
 import { userRouter } from "./routers/user.router";
 
@@ -13,6 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/posts", postRouter);
 
@@ -27,7 +29,7 @@ process.on("uncaughtException", (error) => {
   process.exit(1);
 });
 
-app.listen(config.port, config.host, async () => {
-  await mongoose.connect(config.mongo_url);
-  console.log(`Server is running at http://${config.host}:${config.port}`);
+app.listen(configs.port, configs.host, async () => {
+  await mongoose.connect(configs.mongo_url);
+  console.log(`Server is running at http://${configs.host}:${configs.port}`);
 });

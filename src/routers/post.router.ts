@@ -1,15 +1,16 @@
 import { Router } from "express";
 
 import { postController } from "../controllers/post.controller";
-
-//import { commonMiddleware } from "../middlewares/common.middleware";
+import { commonMiddleware } from "../middlewares/common.middleware";
+import { PostValidator } from "../validators/post.validator";
 
 const router = Router();
 
 router.get("/", postController.getList);
 router.post(
   "/",
-  // commonMiddleware.isBodyValid(UserValidator.createUser),
+  commonMiddleware.isBodyValid(PostValidator.createPost),
+  commonMiddleware.isIdValid("_userId"),
   postController.create,
 );
 

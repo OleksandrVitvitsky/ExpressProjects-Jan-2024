@@ -13,16 +13,6 @@ class UserController {
     }
   }
 
-  public async create(req: Request, res: Response, next: NextFunction) {
-    try {
-      const dto = req.body as IUser;
-      const result = await userService.create(dto);
-      res.status(201).json(result);
-    } catch (e) {
-      next(e);
-    }
-  }
-
   public async getById(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.params.userId;
@@ -33,23 +23,34 @@ class UserController {
     }
   }
 
-  public async updateById(req: Request, res: Response, next: NextFunction) {
+  public async getMe(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.params.userId;
+      const userId = req.res.locals.jwtPayload.userId as string;
+      const result = await userService.getMe(userId);
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async updateMe(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.res.locals.jwtPayload.userId as string;
       const dto = req.body as IUser;
 
-      const result = await userService.updateById(userId, dto);
+      const result = await userService.updateMe(userId, dto);
       res.status(201).json(result);
     } catch (e) {
       next(e);
     }
   }
 
-  public async deleteById(req: Request, res: Response, next: NextFunction) {
+  public async deleteMe(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.params.userId;
-      await userService.deleteById(userId);
-      res.sendStatus(204);
+      const userId = req.res.locals.jwtPayload.userId as string;
+      await userService.deleteMe(userId);
+      //res.sendStatus(204);
+      res.status(200).json({ message: "Користувача успішно видалено" });
     } catch (e) {
       next(e);
     }

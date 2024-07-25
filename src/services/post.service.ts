@@ -1,4 +1,3 @@
-//import { ApiError } from "../errors/api-error";
 import { IPost } from "../interfaces/post.interface";
 import { postRepository } from "../repositories/post.repository";
 
@@ -8,7 +7,6 @@ class PostService {
   }
 
   public async create(post_dto: IPost): Promise<IPost> {
-    // await this.isContentExist(dto.content);
     return await postRepository.create(post_dto);
   }
 
@@ -26,13 +24,6 @@ class PostService {
   public async deleteById(postId: string): Promise<void> {
     await postRepository.deleteById(postId);
   }
-
-  // private async isContentExist(content: string): Promise<void> {
-  //   const content = await postRepository.getByParams({ content });
-  //   if (content) {
-  //     throw new ApiError("Email already exists", 409);
-  //   }
-  // }
 }
 
 export const postService = new PostService();

@@ -34,7 +34,6 @@ class PostController {
     try {
       const postId = req.params.postId;
       const post_dto = req.body as IPost;
-
       const result = await postService.updateById(postId, post_dto);
       res.status(201).json(result);
     } catch (e) {
