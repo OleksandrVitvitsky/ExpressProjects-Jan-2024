@@ -6,7 +6,8 @@ import { userService } from "../services/user.service";
 class UserController {
   public async getList(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await userService.getList();
+      const query = req.query;
+      const result = await userService.getList(query);
       res.json(result);
     } catch (e) {
       next(e);
@@ -49,8 +50,7 @@ class UserController {
     try {
       const userId = req.res.locals.jwtPayload.userId as string;
       await userService.deleteMe(userId);
-      //res.sendStatus(204);
-      res.status(200).json({ message: "Користувача успішно видалено" });
+      res.sendStatus(204);
     } catch (e) {
       next(e);
     }

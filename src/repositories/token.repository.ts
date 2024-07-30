@@ -12,22 +12,12 @@ class TokenRepository {
     return await Token.findOne(params);
   }
 
-  // public async deleteById(id: string): Promise<void> {
-  //   await Token.deleteOne({ _id: id });
-  // }
-  // public async deleteById(id: string, field: string): Promise<void> {
-  //   await Token.deleteOne({ [field]: id });
-  // }
+  public async deleteById(id: string): Promise<void> {
+    await Token.deleteOne({ _id: id });
+  }
 
-  public async deleteByParams(
-    params: FilterQuery<IToken>,
-    path: string,
-  ): Promise<void> {
-    if (path === "/logout-all") {
-      await Token.deleteMany(params);
-    } else {
-      await Token.deleteOne(params);
-    }
+  public async deleteByParams(params: FilterQuery<IToken>): Promise<void> {
+    await Token.deleteMany(params);
   }
 }
 
