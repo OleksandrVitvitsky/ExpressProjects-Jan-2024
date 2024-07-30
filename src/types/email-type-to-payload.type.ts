@@ -5,7 +5,7 @@ import { PickRequired } from "./pick-required.type";
 export type EmailTypeToPayloadType = {
   [EmailTypeEnum.WELCOME]: PickRequired<
     EmailPayloadCombinedType,
-    "name" | "actionToken"
+    "name" | "actionToken" | "FRONTEND_URL"
   >;
 
   [EmailTypeEnum.FORGOT_PASSWORD]: PickRequired<

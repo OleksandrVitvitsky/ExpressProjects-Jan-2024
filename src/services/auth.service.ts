@@ -1,3 +1,4 @@
+import { configs } from "../configs/configs";
 import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
 import { EmailTypeEnum } from "../enums/email-type.enum";
 import { ApiError } from "../errors/api-error";
@@ -27,17 +28,22 @@ class AuthService {
       userId: user._id,
       role: user.role,
     });
-    //TODO
-    // const actionToken = await tokenService.generateActionToken({
-    //   userId: user._id,
-    //   role: user.role,
-    // });
 
+    const actionToken = await tokenService.generateActionToken(
+      { userId: user._id, role: user.role },
+      ActionTokenTypeEnum.VERIFY_EMAIL,
+    );
+    await actionTokenRepository.create({
+      actionToken,
+      type: ActionTokenTypeEnum.VERIFY_EMAIL,
+      _userId: user._id,
+    });
     await tokenRepository.create({ ...tokens, _userId: user._id });
 
     await emailService.sendEmail(EmailTypeEnum.WELCOME, dto.email, {
       name: dto.name,
-      actionToken: "actionToken",
+      actionToken,
+      FRONTEND_URL: configs.FRONTEND_URL,
     });
     return { user, tokens };
   }
@@ -111,6 +117,16 @@ class AuthService {
     await emailService.sendEmail(EmailTypeEnum.FORGOT_PASSWORD, dto.email, {
       name: user.name,
       actionToken,
+    });
+  }
+
+  public async verify(jwtPayload: ITokenPayload): Promise<void> {
+    await userRepository.updateById(jwtPayload.userId, {
+      isVerified: true,
+    });
+    await actionTokenRepository.deleteByParams({
+      _userId: jwtPayload.userId,
+      type: ActionTokenTypeEnum.VERIFY_EMAIL,
     });
   }
 
