@@ -43,6 +43,7 @@ class EmailService {
     const { subject, template } = emailConstant[type];
 
     // context["frontUrl"] = configs.FRONTEND_URL;
+    // console.log(context);
     const options = {
       to,
       subject,
