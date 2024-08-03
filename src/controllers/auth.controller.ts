@@ -5,7 +5,7 @@ import {
   IForgotSendEmail,
 } from "../interfaces/action-token.interface";
 import { ITokenPayload } from "../interfaces/token.interface";
-import { ILogin, IUser } from "../interfaces/user.interface";
+import { IChangePassword, ILogin, IUser } from "../interfaces/user.interface";
 import { authService } from "../services/auth.service";
 
 class AuthController {
@@ -95,6 +95,12 @@ class AuthController {
     } catch (e) {
       next(e);
     }
+  }
+
+  public async changePassword(req: Request, res: Response, next: NextFunction) {
+    const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+    const dto = req.body as IChangePassword;
+    await authService.changePassword(jwtPayload, dto);
   }
 }
 

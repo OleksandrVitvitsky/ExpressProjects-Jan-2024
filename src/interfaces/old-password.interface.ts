@@ -1,10 +1,9 @@
 import { IUser } from "./user.interface";
 
-export interface IPost {
+export interface IOldPassword {
   _id?: string;
-  content: string;
+  password: string;
   _userId: string | IUser;
-  isDeleted: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

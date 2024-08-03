@@ -14,3 +14,8 @@ export interface IUser {
 }
 
 export interface ILogin extends Pick<IUser, "email" | "password"> {}
+
+export interface IChangePassword {
+  oldPassword: string;
+  newPassword: string;
+}

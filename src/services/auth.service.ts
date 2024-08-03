@@ -7,8 +7,9 @@ import {
   IForgotSendEmail,
 } from "../interfaces/action-token.interface";
 import { ITokenPair, ITokenPayload } from "../interfaces/token.interface";
-import { ILogin, IUser } from "../interfaces/user.interface";
+import { IChangePassword, ILogin, IUser } from "../interfaces/user.interface";
 import { actionTokenRepository } from "../repositories/action-token.repository";
+import { oldPasswordRepository } from "../repositories/old-password.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
 import { emailService } from "./email.service";
@@ -90,6 +91,7 @@ class AuthService {
     const user = await userRepository.getById(payload.userId);
     await emailService.sendEmail(EmailTypeEnum.LOGOUT, user.email, {
       name: user.name,
+      FRONTEND_URL: configs.FRONTEND_URL,
     });
   }
 
@@ -98,6 +100,7 @@ class AuthService {
     const user = await userRepository.getById(payload.userId);
     await emailService.sendEmail(EmailTypeEnum.LOGOUT, user.email, {
       name: user.name,
+      FRONTEND_URL: configs.FRONTEND_URL,
     });
   }
 
@@ -117,13 +120,12 @@ class AuthService {
     await emailService.sendEmail(EmailTypeEnum.FORGOT_PASSWORD, dto.email, {
       name: user.name,
       actionToken,
+      FRONTEND_URL: configs.FRONTEND_URL,
     });
   }
 
   public async verify(jwtPayload: ITokenPayload): Promise<void> {
-    await userRepository.updateById(jwtPayload.userId, {
-      isVerified: true,
-    });
+    await userRepository.updateById(jwtPayload.userId, { isVerified: true });
     await actionTokenRepository.deleteByParams({
       _userId: jwtPayload.userId,
       type: ActionTokenTypeEnum.VERIFY_EMAIL,
@@ -146,6 +148,43 @@ class AuthService {
     });
   }
 
+  public async changePassword(
+    jwtPayload: ITokenPayload,
+    dto: IChangePassword,
+  ): Promise<void> {
+    const [user, oldPasswords] = await Promise.all([
+      userRepository.getById(jwtPayload.userId),
+      oldPasswordRepository.getByUserId(jwtPayload.userId),
+    ]);
+    const isPasswordCorrect = await passwordService.comparePassword(
+      dto.oldPassword,
+      user.password,
+    );
+    if (!isPasswordCorrect) {
+      throw new ApiError("Invalid password", 401);
+    }
+
+    const passwords = [...oldPasswords, { password: user.password }];
+    await Promise.all(
+      passwords.map(async (oldPassword) => {
+        const isOldPassword = await passwordService.comparePassword(
+          dto.newPassword,
+          oldPassword.password,
+        );
+        if (isOldPassword) {
+          throw new ApiError("New password should not be the same as old", 409);
+        }
+      }),
+    );
+
+    const password = await passwordService.hashPassword(dto.newPassword);
+    await userRepository.updateById(jwtPayload.userId, { password });
+    await oldPasswordRepository.create({
+      password: user.password,
+      _userId: user._id,
+    });
+    await tokenRepository.deleteByParams({ _userId: jwtPayload.userId });
+  }
   private async isEmailExist(email: string): Promise<void> {
     const user = await userRepository.getByParams({ email });
     if (user) {

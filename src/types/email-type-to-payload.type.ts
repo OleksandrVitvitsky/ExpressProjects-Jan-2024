@@ -10,8 +10,11 @@ export type EmailTypeToPayloadType = {
 
   [EmailTypeEnum.FORGOT_PASSWORD]: PickRequired<
     EmailPayloadCombinedType,
-    "name" | "actionToken"
+    "name" | "actionToken" | "FRONTEND_URL"
   >;
 
-  [EmailTypeEnum.LOGOUT]: PickRequired<EmailPayloadCombinedType, "name">;
+  [EmailTypeEnum.LOGOUT]: PickRequired<
+    EmailPayloadCombinedType,
+    "name" | "FRONTEND_URL"
+  >;
 };
