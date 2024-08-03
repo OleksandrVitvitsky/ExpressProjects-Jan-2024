@@ -21,4 +21,7 @@ const deleteOldTokens = async () => {
   //console.log(">> finished deleteOldTokens --");
   //console.log("-----------------------------------------------------");
 };
-export const deleteOldTokens_Cron = new CronJob("0 * * * * *", deleteOldTokens);
+export const deleteOldTokens_Cron = new CronJob(
+  "0 */30 * * * *",
+  deleteOldTokens,
+);

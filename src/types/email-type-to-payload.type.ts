@@ -17,4 +17,9 @@ export type EmailTypeToPayloadType = {
     EmailPayloadCombinedType,
     "name" | "FRONTEND_URL"
   >;
+
+  [EmailTypeEnum.OLD_VISIT]: PickRequired<
+    EmailPayloadCombinedType,
+    "name" | "FRONTEND_URL"
+  >;
 };

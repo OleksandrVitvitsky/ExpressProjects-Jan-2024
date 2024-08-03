@@ -17,6 +17,6 @@ const deleteOldPasswords = async () => {
 };
 
 export const deleteOldPasswords_Cron = new CronJob(
-  "0,30 * * 8 * *",
+  "0 */30 * * * *",
   deleteOldPasswords,
 );

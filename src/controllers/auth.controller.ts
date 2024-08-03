@@ -98,9 +98,14 @@ class AuthController {
   }
 
   public async changePassword(req: Request, res: Response, next: NextFunction) {
-    const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
-    const dto = req.body as IChangePassword;
-    await authService.changePassword(jwtPayload, dto);
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const dto = req.body as IChangePassword;
+      await authService.changePassword(jwtPayload, dto);
+      res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
   }
 }
 
