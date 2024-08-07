@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import { avatarFileImageConfig } from "../constants/file-type.constant";
 import { userController } from "../controllers/user.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { commonMiddleware } from "../middlewares/common.middleware";
@@ -24,7 +25,7 @@ router.delete("/me", authMiddleware.checkAccessToken, userController.deleteMe);
 router.post(
   "/me/avatar",
   authMiddleware.checkAccessToken,
-  filesMiddleware.isAvatarValid,
+  filesMiddleware.isFileImageValid("avatar", avatarFileImageConfig),
   userController.uploadAvatar,
 );
 router.delete(
